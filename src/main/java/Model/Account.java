@@ -112,7 +112,7 @@ public class Account {
         return "Account{" +
                 "account_id=" + account_id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password_='" + password + '\'' +
                 '}';
     }
 }
