@@ -47,9 +47,12 @@ public class AccountDAO {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                int account_id = (int) rs.getLong(1);
                 String usernameFromDB = rs.getString(2);
                 String password = rs.getString(3);
-                return new Account(usernameFromDB, password);
+                Account account = new Account(usernameFromDB, password);
+                account.setAccount_id(account_id);
+                return account;
             }
         } catch (SQLException e) {
             e.printStackTrace();
