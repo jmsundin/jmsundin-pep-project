@@ -4,12 +4,14 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
-import Model.Message;
+// import Model.Message;
 import Service.AccountService;
-import Service.MessageService;
+// import Service.MessageService;
+
+import java.util.List;
+// import java.util.ArrayList;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -30,9 +32,11 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        app.get("/", this::exampleHandler);
+        app.get("/getAccountTable", this::getAccountTable);
+        app.post("/register", this::register);
+        app.post("/login", this::login);
 
-        app.post("/register", this::registerHandler);
         return app;
     }
 
@@ -44,17 +48,41 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
-    private void registerHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Account account = mapper.readValue(ctx.body(), Account.class);
-        Account addedAccount = accountService.addAccount(account);
-        System.out.println(addedAccount);
+    private void register(Context context) throws JsonProcessingException {
+        Account accountFromBody = context.bodyAsClass(Account.class);
 
-        if(addedAccount == null){
-            ctx.status(400);
-        }else{
-            ctx.json(mapper.writeValueAsString(addedAccount));
+        if (!accountService.isValidCredentials(accountFromBody.username, accountFromBody.password)) {
+            context.result("").status(400);
+        } else {
+            Account registeredAccount = accountService.addAccount(accountFromBody);
+            if (registeredAccount != null) {
+                context.json(registeredAccount).status(200);
+            } else {
+                context.result("").status(400);
+            }
         }
+    }
+
+    private void login(Context context) {
+        Account account = context.bodyAsClass(Account.class);
+
+        if (!accountService.accountIsRegistered(account.username)) {
+            context.status(401);
+        } else {
+            Account accountLoggedIn = accountService.login(account.username, account.password);
+            
+            if (accountLoggedIn == null) {
+                context.status(401);
+            } else {
+                context.json(accountLoggedIn).status(200);
+            }
+        }
+    }
+
+    private void getAccountTable(Context context) {
+        List<Account> accounts = accountService.getAllAccounts();
+        context.json(accounts).status(200);
+    }
 
     }
 }
