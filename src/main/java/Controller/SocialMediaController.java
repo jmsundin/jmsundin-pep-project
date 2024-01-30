@@ -43,6 +43,8 @@ public class SocialMediaController {
         app.get("/getAccountTable", this::getAccountTable);
         app.post("/register", this::register);
         app.post("/login", this::login);
+
+        app.get("/messages", this::getAllMessages);
         app.post("/messages", this::messages);
 
         return app;
@@ -61,7 +63,7 @@ public class SocialMediaController {
     private void register(Context context) throws JsonProcessingException {
         Account accountFromBody = context.bodyAsClass(Account.class);
 
-        if (!accountService.isValidCredentials(accountFromBody.username, accountFromBody.password_)) {
+        if (!accountService.isValidCredentials(accountFromBody.username, accountFromBody.password)) {
             context.result("").status(400);
         } else {
             Account registeredAccount = accountService.addAccount(accountFromBody);
@@ -79,7 +81,7 @@ public class SocialMediaController {
         if (!accountService.accountIsRegistered(account.username)) {
             context.status(401);
         } else {
-            Account accountLoggedIn = accountService.login(account.username, account.password_);
+            Account accountLoggedIn = accountService.login(account.username, account.password);
 
             if (accountLoggedIn == null) {
                 context.status(401);
@@ -105,6 +107,11 @@ public class SocialMediaController {
         } else {
              context.status(400);
          }
+    }
+
+    private void getAllMessages(Context context) {
+        List<Message> messages = messageService.getAllMessages();
+        context.json(messages).status(200);
     }
 
     private void getAccountTable(Context context) {
