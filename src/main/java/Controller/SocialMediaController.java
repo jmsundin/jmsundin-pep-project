@@ -45,6 +45,7 @@ public class SocialMediaController {
         app.post("/login", this::login);
 
         app.get("/messages", this::getAllMessages);
+        app.get("/messages/{message_id}", this::getMessageById);
         app.post("/messages", this::messages);
 
         return app;
@@ -68,7 +69,7 @@ public class SocialMediaController {
         } else {
             Account registeredAccount = accountService.addAccount(accountFromBody);
             if (registeredAccount != null) {
-                context.json(registeredAccount).status(200);
+                context.json(registeredAccount);
             } else {
                 context.result("").status(400);
             }
@@ -86,7 +87,7 @@ public class SocialMediaController {
             if (accountLoggedIn == null) {
                 context.status(401);
             } else {
-                context.json(accountLoggedIn).status(200);
+                context.json(accountLoggedIn);
             }
         }
     }
@@ -100,7 +101,7 @@ public class SocialMediaController {
          if (messageService.messageIsValid(posted_by, message_text)) {
              Message message = messageService.insertMessage(posted_by, message_text, time_posted_epoch);
              if (message != null) {
-                 context.json(message).status(200);
+                 context.json(message);
              } else {
                  
              }
@@ -111,11 +112,21 @@ public class SocialMediaController {
 
     private void getAllMessages(Context context) {
         List<Message> messages = messageService.getAllMessages();
-        context.json(messages).status(200);
+        context.json(messages);
+    }
+
+    private void getMessageById(Context context) {
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message message = messageService.getMessageById(message_id);
+        if (message == null) {
+            context.status(200);
+        } else {
+            context.json(message);
+        }
     }
 
     private void getAccountTable(Context context) {
         List<Account> accounts = accountService.getAllAccounts();
-        context.json(accounts).status(200);
+        context.json(accounts);
     }
 }
