@@ -4,6 +4,8 @@ import Model.Message;
 import DAO.MessageDAO;
 import DAO.AccountDAO;
 
+import java.util.List;
+
 public class MessageService {
     MessageDAO messageDAO;
     AccountDAO accountDAO;
@@ -31,6 +33,10 @@ public class MessageService {
     
     public Message insertMessage(int posted_by, String message_text, long time_posted_epoch) {
         return messageDAO.insertMessage(posted_by, message_text, time_posted_epoch);
+    }
+
+    public List<Message> getAllMessages() {
+        return messageDAO.getAllMessages();
     }
     
 }
