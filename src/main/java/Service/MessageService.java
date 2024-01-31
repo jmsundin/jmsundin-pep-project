@@ -25,9 +25,8 @@ public class MessageService {
         this.accountDAO = accountDAO;
     }
     
-    public boolean messageIsValid(int posted_by, String message_text) {
+    public boolean messageIsValid(String message_text) {
         if (message_text.length() == 0 || message_text.length() > 255) return false;
-        else if (accountDAO.findAccountByAccountId(posted_by) == null) return false;
         else return true;
     }
     
@@ -41,6 +40,10 @@ public class MessageService {
 
     public Message getMessageById(int message_id) {
         return messageDAO.getMessageById(message_id);
+    }
+
+    public Message updateMessageById(int message_id, String updated_message_text) {
+        return messageDAO.updateMessageById(message_id, updated_message_text);
     }
 
     public Message deleteMessageById(int message_id) {
