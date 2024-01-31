@@ -47,6 +47,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessages);
         app.get("/messages/{message_id}", this::getMessageById);
         app.post("/messages", this::messages);
+        app.patch("/messages/{message_id}", this::updateMessageById);
         app.delete("/messages/{message_id}", this::deleteMessageById);
 
         return app;
@@ -99,12 +100,12 @@ public class SocialMediaController {
          String message_text =  messageFromBody.message_text;
          long time_posted_epoch = messageFromBody.time_posted_epoch;
 
-         if (messageService.messageIsValid(posted_by, message_text)) {
+         if (accountService.findAccountByAccountId(posted_by) != null && messageService.messageIsValid(message_text)) {
              Message message = messageService.insertMessage(posted_by, message_text, time_posted_epoch);
              if (message != null) {
                  context.json(message);
              } else {
-                 
+                context.status(400);
              }
         } else {
              context.status(400);
@@ -133,6 +134,21 @@ public class SocialMediaController {
             context.status(200);
         }
         else {
+            context.json(message);
+        }
+    }
+
+    private void updateMessageById(Context context) {
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message messageFromBody = context.bodyAsClass(Message.class);
+        messageFromBody.setMessage_id(message_id);
+        
+        Message message = messageService.getMessageById(message_id);
+        if (message == null || !messageService.messageIsValid(messageFromBody.message_text)) {
+            context.status(400);
+        }
+        else {
+            message = messageService.updateMessageById(message_id, messageFromBody.message_text);
             context.json(message);
         }
     }
