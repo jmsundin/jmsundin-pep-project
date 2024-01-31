@@ -14,7 +14,7 @@ These will be provided in a sql script, and a ConnectionUtil class that will run
 ```
 account_id integer primary key auto_increment,
 username varchar(255) unique,
-password varchar(255)
+password_ varchar(255)
 ```
 
 ### Message
