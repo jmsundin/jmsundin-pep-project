@@ -18,8 +18,8 @@ public class MessageDAO {
         try {
             Connection conn = ConnectionUtil.getConnection();
             String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) "
-                        + "VALUES (?, ?, ?)";
-            
+                    + "VALUES (?, ?, ?)";
+
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, posted_by);
             ps.setString(2, message_text);
@@ -96,6 +96,25 @@ public class MessageDAO {
         return null;
     }
 
+    public Message updateMessageById(int message_id, String updated_message_text) {
+        try {
+            Connection conn = ConnectionUtil.getConnection();
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, updated_message_text);
+            ps.setInt(2, message_id);
+            int updatedRows = ps.executeUpdate();
+
+            while (updatedRows > 0) {
+                return getMessageById(message_id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Message deleteMessageById(int message_id) {
         Message message = getMessageById(message_id);
         if (message != null) {
@@ -103,11 +122,11 @@ public class MessageDAO {
                 Connection conn = ConnectionUtil.getConnection();
                 String sql = "DELETE FROM message WHERE message_id = ?";
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-    
+
                 ps.setInt(1, message_id);
-    
+
                 int deletedEntity = ps.executeUpdate();
-    
+
                 if (deletedEntity > 0) {
                     return message;
                 }
@@ -117,5 +136,5 @@ public class MessageDAO {
         }
         return null;
     }
-    
+
 }
