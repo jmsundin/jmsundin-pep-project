@@ -78,7 +78,7 @@ public class Account {
     }
     /**
      * Properly named getters and setters are necessary for Jackson ObjectMapper to work. You may use them as well.
-     * @return password
+     * @return password_
      */
     public String getPassword() {
         return password;
@@ -112,7 +112,7 @@ public class Account {
         return "Account{" +
                 "account_id=" + account_id +
                 ", username='" + username + '\'' +
-                ", password_='" + password + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }
