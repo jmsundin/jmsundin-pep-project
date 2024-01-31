@@ -30,8 +30,12 @@ public class AccountService {
     }
 
     public boolean accountIsRegistered(String username) {
-        if (accountDAO.findAccountByUsername(username) != null) return true;
-        return false;
+        if (accountDAO.findAccountByUsername(username) == null) return false;
+        return true;
+    }
+
+    public Account findAccountByAccountId(int account_id) {
+        return accountDAO.findAccountByAccountId(account_id);
     }
 
     public Account login(String username, String password) {
